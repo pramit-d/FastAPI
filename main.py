@@ -1,21 +1,16 @@
-# -*- coding: utf-8 -*-
-
 # 1. Library imports
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 import numpy as np
 from PIL import Image
 import io
+import tensorflow as tf
+from tensorflow.keras import models
 
 # 2. Create the app object
 app = FastAPI()
 
 # 3. Load the pre-trained model
-# Import TensorFlow
-import tensorflow as tf
-from tensorflow.keras import models
-
-# Load the pre-trained model
 model = models.load_model("image.h5")
 
 # Define class names for CIFAR-10 dataset
@@ -32,8 +27,9 @@ def index():
 @app.post('/predict')
 async def predict_image(file: UploadFile = File(...)):
     # Read the contents of the uploaded file
+    print("Trying to read file...")
     contents = await file.read()
-    
+    print("file reading successful..")
     # Open the image using PIL and convert to RGB mode
     image = Image.open(io.BytesIO(contents)).convert("RGB")
     
@@ -59,4 +55,4 @@ async def predict_image(file: UploadFile = File(...)):
 # 6. Run the API with uvicorn
 #    Will run on http://127.0.0.1:8000
 if __name__ == '__main__':
-    uvicorn.run(app, host='127.0.0.1', port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)
